@@ -14,5 +14,6 @@ export const FILTER_OPTIONS = {
   SEARCH: {
     MULTI: 'multi',
     MOVIES: 'movie',
+    TV: 'tv',
   }
 }
