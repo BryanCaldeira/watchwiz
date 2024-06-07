@@ -1,20 +1,31 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import MainLayout from './layout/MainLayout';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import setConfig from './api/config';
+
 
 export default function App() {
+  React.useEffect(() => {
+    setConfig();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider initialRouteName="Home">
+      <NavigationContainer theme={navigatorTheme}>
+        <MainLayout />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+const navigatorTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#293648',
+    secondary: '#0077FF',
+    white: '#ffffff',
+    background: '#ffffff'
   },
-});
+};
