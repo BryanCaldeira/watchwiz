@@ -22,6 +22,7 @@ const TVShowsLayout = (props) => {
     try {
       const response = await getTVShows(filterBy, page);
       setData(response?.data ?? {});
+      setPage(response?.data?.page);
     } catch (error) {
       console.error(error);
     } finally {

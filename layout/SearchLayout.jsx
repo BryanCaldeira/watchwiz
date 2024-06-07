@@ -30,6 +30,7 @@ const SearchLayout = (props) => {
     try {
       const response = await getSearch(filterBy, searchQuery, page);
       setData(response?.data ?? {});
+      setPage(response?.data?.page);
     } catch (error) {
       console.error(error);
     } finally {
