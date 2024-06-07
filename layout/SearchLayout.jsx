@@ -1,37 +1,43 @@
-import { Button, Searchbar, Text } from 'react-native-paper';
-import { useEffect, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
-import SelectInput from '../components/SelectInput';
-import Card from '../components/Card';
-import { FILTER_OPTIONS } from '../constants';
-import getSearch from '../api/getSearch.api';
-import Loader from '../components/Loader';
+import Pagination from '@cherry-soft/react-native-basic-pagination';
 import { useTheme } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { Button, Searchbar, Text } from 'react-native-paper';
+import getSearch from '../api/getSearch.api';
+import Card from '../components/Card';
+import Loader from '../components/Loader';
+import SelectInput from '../components/SelectInput';
+import { FILTER_OPTIONS } from '../constants';
+import { palette } from '../theme';
 
 
 const SearchLayout = (props) => {
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [filterBy, setFilterBy] = useState(FILTER_OPTIONS.SEARCH.MULTI);
   const [searchQuery, setSearchQuery] = useState('');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
   const { colors } = useTheme();
 
-  const search = async () => {
+  const searchApiCall = useCallback(async () => {
     setLoading(true);
-    setData([]);
+    setData({});
+
     try {
-      const response = await getSearch(filterBy, searchQuery);
-      setData(response?.data?.results ?? [])
+      const response = await getSearch(filterBy, searchQuery, page);
+      setData(response?.data ?? {});
     } catch (error) {
       console.error(error);
     } finally {
       setTimeout(() => setLoading(false), 1000);
     }
-  }
+  }, [filterBy, searchQuery, page])
+
+  useEffect(() => {searchApiCall()}, [filterBy, page])
 
   return (
     <View>
@@ -40,9 +46,10 @@ const SearchLayout = (props) => {
           Search Movie/TV Show/People <Text style={{ color: 'red' }}>*</Text></Text>
         <Searchbar
           style={searchLayoutProps.searchBar.style}
-          placeholder="Search"
+          placeholder="eg James Bond, CSI"
           onChangeText={setSearchQuery}
           value={searchQuery}
+          onSubmitEditing={searchApiCall}
         />
       </View>
       <Text style={{marginLeft: 15}} variant="labelSmall">
@@ -60,26 +67,41 @@ const SearchLayout = (props) => {
         <Button
           buttonColor={colors.secondary}
           style={{ flex: 0.4 }}
-          mode="contained" onPress={search}>Search</Button>
+          mode="contained" onPress={searchApiCall}>Search</Button>
       </View>
 
       <ScrollView style={searchLayoutProps.scrollView.style}>
-        <View style={{paddingBottom: 200}}>
+        <View style={{paddingBottom: 300}}>
           <Loader loading={loading}/>
           {
-            data.length ?
+            data.results?.length ?
             (
-              !loading && data.map(item => {
-                return (
-                  <Card
-                    key={item.id}
-                    title={item.title ?? item.name}
-                    posterPath={item.poster_path ?? item.profile_path}
-                    popularity={item.popularity}
-                    releaseDate={item.release_date}
-                    firstAirDate={item.first_air_date}
-                    onButtonPress={() => props.navigation.navigate("Details", {id: item.id, media_type: item.media_type ?? "movie"})} />)
-                })
+              <>
+                {
+                  !loading && data?.results?.map(item => {
+                  return (
+                    <Card
+                      key={item.id}
+                      title={item.title ?? item.name}
+                      posterPath={item.poster_path ?? item.profile_path}
+                      popularity={item.popularity}
+                      releaseDate={item.release_date}
+                      firstAirDate={item.first_air_date}
+                      onButtonPress={() => props.navigation.navigate("Details", {id: item.id, media_type: item.media_type ?? "movie"})} />)
+                  })
+                }
+                {
+                  !loading && (
+                    <Pagination
+                      totalItems={data?.total_pages ?? 0}
+                      pageSize={20}
+                      currentPage={page}
+                      btnStyle={searchLayoutProps.paginationBtn.style}
+                      onPageChange={(page) => setPage(page)}
+                    />
+                  )
+                }
+              </>
             ) :
             !loading && <Text
               variant="headlineSmall"
@@ -128,6 +150,12 @@ const searchLayoutProps = {
     style: StyleSheet.create({
       textAlign: 'center',
       marginTop: 100,
+    }),
+  },
+  paginationBtn: {
+    style: StyleSheet.create({
+      borderRadius: 10,
+      backgroundColor: palette.gray,
     }),
   },
 }
