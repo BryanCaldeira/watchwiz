@@ -54,7 +54,7 @@ const DetailViewLayout = ({route, navigation}) => {
                   style={detailViewLayoutProps.poster.style}
                   resizeMode="cover" width={"100%"} height={300}
                   alt="Image"
-                  source={{ uri: `${PICTURE_BASE_URI}/${type === "person" ? "w200/" : "original"}${data?.poster_path ?? data?.profile_path}` }} />
+                  source={{ uri: `${PICTURE_BASE_URI}/w400/${data?.poster_path ?? data?.profile_path}` }} />
               </View>
               <Text style={detailViewLayoutProps.overview.style}>{ data?.overview ?? data.biography }</Text>
               {type !== "person" ? <Text variant="labelSmall">Popularity: { data?.popularity } | { type === "movie" ? `Release Date: ${data?.release_date}`: `First Air Date: ${data?.first_air_date}` }</Text>: null}

@@ -30,7 +30,7 @@ const Card = (props) => {
             alt="Image"
             style={cardProps.poster.style}
             height="100%"
-            source={{ uri: `${PICTURE_BASE_URI}/${mediaType === "person" ? "w200/" : "original"}${posterPath}` }} />
+            source={{ uri: `${PICTURE_BASE_URI}/w200/${posterPath}` }} />
         </View>
         <View style={cardProps.contentContainer.style}>
           <Text variant="titleMedium">{ title }</Text>
