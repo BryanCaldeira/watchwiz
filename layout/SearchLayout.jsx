@@ -30,7 +30,6 @@ const SearchLayout = (props) => {
     try {
       const response = await getSearch(filterBy, searchQuery, page);
       setData(response?.data ?? {});
-      setPage(response?.data?.page);
     } catch (error) {
       console.error(error);
     } finally {
@@ -38,7 +37,14 @@ const SearchLayout = (props) => {
     }
   }, [filterBy, searchQuery, page])
 
-  useEffect(() => {searchApiCall()}, [filterBy, page])
+  useEffect(() => {
+    setPage(1);
+    searchApiCall();
+  }, [filterBy])
+
+  useEffect(() => {
+    searchApiCall();
+  }, [page])
 
   return (
     <View>

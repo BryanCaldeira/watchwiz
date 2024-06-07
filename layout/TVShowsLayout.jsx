@@ -22,7 +22,6 @@ const TVShowsLayout = (props) => {
     try {
       const response = await getTVShows(filterBy, page);
       setData(response?.data ?? {});
-      setPage(response?.data?.page);
     } catch (error) {
       console.error(error);
     } finally {
@@ -31,8 +30,13 @@ const TVShowsLayout = (props) => {
   }, [filterBy, page])
 
   useEffect(() => {
-    getTVShowsApiCall()
-  }, [filterBy, page])
+    setPage(1);
+    getTVShowsApiCall();
+  }, [filterBy])
+
+  useEffect(() => {
+    getTVShowsApiCall();
+  }, [page])
 
   return (
     <View>

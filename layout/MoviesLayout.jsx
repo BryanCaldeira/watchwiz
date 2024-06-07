@@ -22,7 +22,6 @@ const MoviesLayout = (props) => {
     try {
       const response = await getMovies(filterBy, page);
       setData(response?.data ?? {});
-      setPage(response?.data?.page);
     } catch (error) {
       console.error(error);
     } finally {
@@ -31,8 +30,13 @@ const MoviesLayout = (props) => {
   }, [filterBy, page])
 
   useEffect(() => {
+    setPage(1);
     getMoviesApiCall();
-  }, [filterBy, page])
+  }, [filterBy])
+
+  useEffect(() => {
+    getMoviesApiCall();
+  }, [page])
 
   return (
     <View>

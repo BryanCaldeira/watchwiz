@@ -1,10 +1,9 @@
 import { ActivityIndicator } from 'react-native-paper';
-import { useTheme } from '@react-navigation/native';
 import { View } from 'react-native';
+import { palette } from '../theme';
 
 
 const Loader = (props) => {
-  const { colors } = useTheme();
   const { size, loading } = props;
 
   if (!loading) {
@@ -16,7 +15,7 @@ const Loader = (props) => {
       <ActivityIndicator
         size={size ?? 'large'}
         animating={true}
-        color={colors.gray} />
+        color={palette.gray} />
     </View>
   )
 }
